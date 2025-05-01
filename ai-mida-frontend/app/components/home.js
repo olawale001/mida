@@ -33,20 +33,27 @@ export default function Milas() {
   };
 
   return (
-    <div>
-      <h2>Text Generator</h2>
+    <div className='justify-center items-center flex flex-col h-screen '>
+      <h2 className='justify-center'>Text Generator</h2>
+      <div>
+        <h3>Result</h3>
+        <p>{result}</p>
+      </div>  
       <textarea
         placeholder="Enter your prompt"
         onChange={(e) => setPrompt(e.target.value)}
         rows={5}
         cols={50}
+        style={{
+          marginTop: '10px',
+          marginBottom: '10px',
+          padding: '10px',
+          borderRadius: '5px',
+          border: '1px solid #ccc',
+        }}
       />
       <br />
       <button onClick={generate}>Generate</button>
-      <div>
-        <h3>Result</h3>
-        <p>{result}</p>
-      </div>  
     </div>
   );
 }
