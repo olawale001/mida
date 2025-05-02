@@ -19,7 +19,7 @@ export default function Milas() {
   const generate = async () => {
     const token = localStorage.getItem('token');
     try {
-      const res = await axios.post('http://localhost:8000/generate/',
+      const res = await axios.post('http://localhost:8000/api/mida_ai/generate/',
         { prompt },
         { headers: { Authorization: `Bearer ${token}` } }
       );

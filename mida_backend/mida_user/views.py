@@ -1,11 +1,10 @@
-from numpy import True_
 from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView
 from django.contrib.auth import get_user_model
-from .serializers import RegisterSerializer, LoginSerializer
+from .serializers import RegisterSerializer, LoginSerializer, UserSerializer
 from django.core.mail import send_mail
 from django.conf import settings
 from django.urls import reverse
@@ -99,3 +98,11 @@ class PasswordResetConfirmView(GenericAPIView):
             return Response({'message': 'Password reset successfully'}, status=200)
         return Response({'message': 'Invalid or expired token'}, status=400)
 
+
+
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, reqest):
+        serializer = UserSerializer(reqest.user)
+        return Response(serializer.data)

@@ -27,7 +27,7 @@ export default function Login() {
         body: JSON.stringify({ token }),
       });
 
-      router.push('/home');
+      router.push('/profile');
     } catch (err) {
       console.error('Login failed:', err);
     }
