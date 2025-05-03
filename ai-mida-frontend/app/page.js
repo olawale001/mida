@@ -1,7 +1,7 @@
 
 import Link from "next/link";
 import { ThemeProvider } from 'next-themes';
-import  Navbar from "../components/navbar";
+// import  Navbar from "../components/navbar";
 import  "./globals.css";
 
 export default function Home({ Component, pageProps }) {
@@ -9,12 +9,10 @@ export default function Home({ Component, pageProps }) {
 
     <div>
        <ThemeProvider attribute="class">
-        <>
-        <Navbar user={pageProps.user} />
-        <Component {...pageProps} />
-        </>
-    </ThemeProvider>
-    <Navbar />
+        
+        {/* <Component {...pageProps} /> */}
+         </ThemeProvider>
+  
     </div>
   )
 }

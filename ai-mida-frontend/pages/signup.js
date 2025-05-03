@@ -2,30 +2,91 @@
 
 
 import { useState } from "react";
+import Navbar from "../components/navbar";
+import '../app/globals.css';
 import api from '../lib/api';
 
 
 export default function Signup() {
-    const [form, setForm] = useState({ username: '', email: '', password: '' });
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
-    const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
-
-    const handleSubmit = async e => {
-        e.preventDefault();
+    const register = async () => {
         try {
-            await api.post('/register/', form);
-            alert('Click your email to verify!');
-        } catch (err) {
-            console.error(err.response?.data);
+            const res = await api.post('/auth/register/', {
+                username,
+                email,
+                password,
+            });
+            localStorage.setItem('token', res.data.access);
+            console.log('Registration successful:', res.data);
+        } catch (error) {
+            console.error('Error during registration:', error);
         }
-    };
+    }
+
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input name="username" onChange={handleChange} placeholder="Username" required />
-            <input name="email" type="email" onChange={handleChange} placeholder="Email" required />
-            <input name="password" type="password" onChange={handleChange} placeholder="Password" required />
-            <button type="submit">Signup</button>
-        </form>
+        <>
+        <Navbar />
+        <div className="min-h-screen p-6 flex flex-col items-center justify-center ">
+        <input placeholder="username" onChange={e => setUsername(e.target.value)} style={{
+            margin: '10px',
+            padding: '10px',
+            borderRadius: '5px',
+            border: '1px solid #ccc',
+        }} />
+        <input placeholder="email" onChange={e => setEmail(e.target.value)} style={{
+            margin: '10px',
+            padding: '10px',
+            borderRadius: '5px',
+            border: '1px solid #ccc',
+        }} />
+        <input placeholder="password" type="password" onChange={e => setPassword(e.target.value)} style={{
+            margin: '10px',
+            padding: '10px',
+            borderRadius: '5px',
+            border: '1px solid #ccc',
+        }} />
+        <button onClick={register} style={{
+            padding: '10px 20px',
+            backgroundColor: '#007BFF',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+        }} onMouseOver={e => e.currentTarget.style.backgroundColor = styles.buttonHover.backgroundColor} onMouseOut={e => e.currentTarget.style.backgroundColor = styles.button.backgroundColor
+        } >Register</button>
+        </div>
+        </>
     )
 }
+
+const styles = {
+    input: {
+        margin: '10px',
+        padding: '10px',
+        borderRadius: '5px',
+        border: '1px solid #ccc',
+    },
+    button: {
+        padding: '10px 20px',
+        backgroundColor: '#007BFF',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer',
+    },
+    buttonHover: {
+        backgroundColor: '#0056b3',
+    },
+    container: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+    },
+
+};

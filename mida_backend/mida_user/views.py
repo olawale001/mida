@@ -4,7 +4,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView
 from django.contrib.auth import get_user_model
-from .serializers import RegisterSerializer, LoginSerializer, UserSerializer
+from .serializers import RegisterSerializer, LoginSerializer, UserSerializer, PasswordResetSerializer
 from django.core.mail import send_mail
 from django.conf import settings
 from django.urls import reverse
@@ -63,6 +63,11 @@ class VerifyEmailView(APIView):
 
 class PasswordResetRequestView(GenericAPIView):
     permission_classes = [AllowAny]
+    serializer_class = PasswordResetSerializer
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return PasswordResetSerializer
+        return super().get_serializer_class()
 
     def post(self, request):
         email = request.data.get('email')
