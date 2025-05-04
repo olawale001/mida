@@ -34,7 +34,8 @@ class LoginSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email']     
+        fields = ['id', 'name', 'email']   
+        read_only_fields = ['id', 'email']  
 
 
 class PasswordResetSerializer(serializers.Serializer):
@@ -43,6 +44,8 @@ class PasswordResetSerializer(serializers.Serializer):
     def validate_email(self, value):
         try:
             user = User.objects.get(email=value)
+            user.is_active = False
+            user.save()
         except User.DoesNotExist:
             raise serializers.ValidationError("User with this email does not exist.")
         return value           

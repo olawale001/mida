@@ -1,3 +1,4 @@
+from functools import partial
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -111,3 +112,10 @@ class UserProfileView(APIView):
     def get(self, reqest):
         serializer = UserSerializer(reqest.user)
         return Response(serializer.data)
+    
+    def put(self, request):
+        serializer = UserSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)

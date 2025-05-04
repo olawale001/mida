@@ -5,22 +5,27 @@ import { useState } from "react";
 import Navbar from "../components/navbar";
 import '../app/globals.css';
 import api from '../lib/api';
+import { useRouter } from "next/navigation";
 
 
 export default function Signup() {
+    const router = useRouter();
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const register = async () => {
         try {
-            const res = await api.post('/auth/register/', {
+            const res = await api.post('/register/', {
                 username,
                 email,
                 password,
             });
             localStorage.setItem('token', res.data.access);
             console.log('Registration successful:', res.data);
+            alert('Regitration successfully');
+            router.push('/dashboard')
+
         } catch (error) {
             console.error('Error during registration:', error);
         }

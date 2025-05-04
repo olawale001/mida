@@ -5,11 +5,13 @@ import { useState } from "react";
 import Navbar from "../components/navbar";
 import '../app/globals.css';
 import api from "../lib/api";
+import { useRouter } from "next/navigation";
 
 
 export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const router = useRouter();
 
 
     const login = async () => {
@@ -20,6 +22,8 @@ export default function Login() {
             });
             localStorage.setItem('token', res.data.access);
             console.log('Login successful:', res.data);
+            router.push('/dashboard')
+
         }
         catch (error) {
             console.error('Error during login:', error);
