@@ -19,9 +19,9 @@ export default function Sidebar() {
                 height={80}
                 className="rounded-full"/>
                 <h2 className="mt-4 text-lg font-semibold text-gray-800 dark:text-white">
-                    {user?.name || 'User'}
+                    {user?.name || 'Loading'}
                 </h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{user?.email}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{user?.email || 'Loading'}</p>
             </div>
 
             <nav className="mt-8 flex flex-col gap-4">

@@ -1,4 +1,3 @@
-from functools import partial
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -10,18 +9,23 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.urls import reverse
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes
+from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
 
 
 User = get_user_model()
 
 
+
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
 
-    def send_verification_email(user, request):
+    def perform_create(self, serializer):
+        user = serializer.save()
+        self.send_verification_email(user, self.request)
+
+    def send_verification_email(self, user, request):
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
         link = request.build_absolute_uri(reverse('verify-email', args=[uid, token]))
@@ -35,6 +39,7 @@ class RegisterView(generics.CreateAPIView):
         )
 
 
+
 class UserLoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
     permission_classes = [AllowAny]
@@ -46,20 +51,22 @@ class UserLoginView(generics.GenericAPIView):
     
 
 
+
 class VerifyEmailView(APIView):
     def get(self, request, uidb64, token):
         try:
-            uid = urlsafe_base64_encode(uidb64).decode()
+            uid = force_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)
         except Exception:
             return Response({'error': 'Invalid link'}, status=400)    
-        
 
         if default_token_generator.check_token(user, token):
             user.is_active = True
             user.save()
             return Response({'message': 'Email verified successfully'}, status=200)
         return Response({'message': 'Invalid or expired token'}, status=400)
+
+
 
 
 class PasswordResetRequestView(GenericAPIView):
