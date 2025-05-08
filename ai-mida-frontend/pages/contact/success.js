@@ -1,6 +1,6 @@
 'use client';
 import Navbar from "../components/navbar";
-import '../app/globals.css';
+import '../app/styles/globals.css';
 
 export default function ContactSuccess() {
     return (

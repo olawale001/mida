@@ -5,15 +5,18 @@ import { useState, useEffect } from 'react';
 import ChartWidget from '../components/chartWidget';
 import DarkModeToggle from '../components/DarkModeToggle';
 import Sidebar from '../components/sidebar';
-import '../app/globals.css';
+import '../app/styles/globals.css';
 
 function Dashboard() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetch('/api/profile/')
-    .then(res => res.json())
-    .then(data => setUser(data));
+    async function fetchUser() {
+      const res = await fetch('/profile/')
+      const data = await res.json(); 
+      setUser(data);
+    }
+    fetchUser();
   }, []);
   return (
     <>

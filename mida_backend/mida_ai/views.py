@@ -1,36 +1,64 @@
-import tensorflow as tf
-import numpy as np
-import pickle
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from .models import AIContent
 from .serializers import AIContentSerializer
+from modell.ai_servises import generate_summary, nlp_analysis
+# from modell.image_generator import image_generate
+# from modell.tts_services import text_to_speech
 
-model = tf.keras.models.load_model("saved_model/ai_text_gen_model.h5")
-with open("saved_model/char_mapping.pkl", "rb") as f:
-    char_to_idx, idx_to_char = pickle.load(f)
+class SummaryAPIView(APIView):
+    def post(self, request):
+        text = request.data.get('input_text')
+        output = generate_summary(text)
+        AIContent.objects.create(
+            title = "Summary", content_type="summary", input_text=text, output_text=output
+        )
+        return Response({"result": output})
+    
+# class ImageGeneratorAPIView(APIView):
+#     def post(self, request):
+#         prompt = request.data.get("prompt")
+#         image_path = image_generate(prompt)
+#         return Response({"image_url": request.build_absolute_uri('/' + image_path)})
+    
 
-SEQ_LENGTH = 40
+# class TextToSpeechAPIView(APIView):
+#     def post(self, request):
+#         text = request.data.get('text')    
+#         audio_path = text_to_speech(text)
+#         return Response({"audio_url": request.build_absolute_uri('/' + audio_path)})
+    
 
-@api_view(['POST'])
+
+class NLPPipelineAPIView(APIView):
+    def post(self, request):
+        text = request.data.get('text')
+        result = nlp_analysis(text)
+        AIContent.objects.create(
+            title = "NLP", content_type = "nlp", input_text = text, output_text = str(result)
+
+        )
+        return Response(result)
+
+
+
+
+
+@api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def generate_text(request):
-    prompt = request.data.get('prompt', '')[:SEQ_LENGTH]
+def history(request):
+    paginator = PageNumberPagination()
+    paginator.page_size = 5
+    contents = AIContent.objects.filter(user=request.user).order_by('-created_at')
+    result_page = paginator.paginate_queryset(contents, request)
+    serializer = AIContentSerializer(result_page, many=True)
+    return paginator.get_paginated_response(serializer.data)
 
-    input_seq = [char_to_idx.get(c, 0) for c in prompt]
-    while len(input_seq) < SEQ_LENGTH:
-        input_seq.insert(0, 0)
-    input_seq = np.array(input_seq).reshap((1, SEQ_LENGTH, 1))    
-
-    generated = prompt
-    for _ in range(200):
-        prediction = model.predict(input_seq)[0]
-        idx = np.argmax(prediction)
-        char = idx_to_char.get(idx, '')
-        generated += char
-        input_seq = np.append(input_seq[:, 1:, :], [[[idx]]], axis=1)
-
-    content = AIContent.object.create(user=request.user, prompt=prompt, result=generated)    
-    serializer = AIContentSerializer(content)
-    return Response(serializer.data)
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def clear_history(request):
+    AIContent.objects.filter(user=request.user).delete()
+    return Response({'message': 'History cleared successfully'})

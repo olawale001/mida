@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Navbar from "../components/navbar";
-import '../app/globals.css';
+import '../app/styles/globals.css';
 import api from '../lib/api';
 import { useRouter } from "next/navigation";
 

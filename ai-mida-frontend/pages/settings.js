@@ -1,6 +1,6 @@
 'use client';
 import Navbar from '../components/navbar';
-import '../app/globals.css';
+import '../app/styles/globals.css';
 
 import { useState, useEffect } from 'react';
 
@@ -9,7 +9,7 @@ export default function SettingsPage() {
 
     useEffect(() => {
         async function fetchUser() {
-            const res = await fetch('/api/profile/');
+            const res = await fetch('/profile/');
             const data = await res.json();
             setUsername(data.name);
         }
@@ -19,7 +19,7 @@ export default function SettingsPage() {
 
     const handleSave = async () => {
         
-        const res = await fetch('/api/profile', {
+        const res = await fetch('/profile/', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

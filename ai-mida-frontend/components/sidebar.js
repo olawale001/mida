@@ -5,9 +5,12 @@ export default function Sidebar() {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        fetch('/api/profile/')
-        .then(res =>res.json())
-        .then(data => setUser(data));
+        async function fetchProfile() {
+            const res = await fetch('/profile/')
+            const data = await res.json();
+            setUser(data);
+        }
+        fetchProfile();
     }, []);
     return  (
         <div className="h-screen w-64 bg-white dark:bg-gray-800 p-6 shadow-lg flex flex-col" >

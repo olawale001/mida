@@ -1,6 +1,6 @@
 'use client';
 import Navbar from "../components/navbar";
-import '../app/globals.css';
+import '../app/styles/globals.css';
 
 
 export default function Contact() {
@@ -23,7 +23,9 @@ export default function Contact() {
           <input type="email" name="email" placeholder="Your Email" className="w-full p-3 border border-gray-300 rounded-md dark:bg-gray-800 dark:text-white" required />
           <textarea name="message" placeholder="Your Message" className="w-full p-3 dark:bg-gray-800 dark:text-white border border-gray-300 rounded-md" rows="5" required></textarea>
           <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded-md cursor-poiter hover:bg-blue-700">Send Message</button>
-          <input type="hidden" name="_redirect" value="/pages/contact/success/" />
+          {/* <input type="hidden" name="_redirect" value="/pages/contact/successfull/" /> */}
+          <input type="hidden" name="_next" value="http://localhost:3000/contact/successfull" />
+
         </form>
       </div>
     </div>

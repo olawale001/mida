@@ -1,25 +1,64 @@
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts";
+import { Line } from 'react-chartjs-2';
+import { Chart, CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend} from 'chart.js';
 
 
-const data = [
-    {name: 'Jan', users: 30},
-    {name: 'Feb', users: 45},
-    {name: 'Mar', users: 70},
-    {name: 'Apr', users: 60},
 
-];
+Chart.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend);
 
-export default function ChartWidget() {
+const ChartWidget = ({ history = [] }) => {
+    const data = {
+        labels: history.map((item, i) => `Gen ${i + 1}`),
+        datasets: [
+            {
+                label: 'Text Length',
+                data: history.map((item) => item.result.length),
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.3,
+            }
+        ]
+    };
+
+    const options = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top',
+      labels: {
+        color: '#fff' 
+      }
+    },
+    title: {
+      display: true,
+      text: 'AI Text Generation Length Over Time',
+      color: '#fff'
+    }
+  },
+  scales: {
+    x: {
+      ticks: { color: '#fff' },
+      grid: { color: '#444' }
+    },
+    y: {
+      ticks: { color: '#fff' },
+      grid: { color: '#444' }
+    }
+  }
+};
+
+
+
+
     return (
-        <div className="p-4 bg-white dark:bg-gray-800 rounded shadow">
-            <h2 className="text-x1 font-semibold text-gray-800 dark:text-gray-100 mb-4">Monthly Users</h2>
-            <LineChart width={300} height={200} data={data}>
-                <Line type="monotone" dataKey="users" stroke="#8884d8" />
-                <CartesianGrid stroke="#ccc" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-            </LineChart>
-        </div>
+        <div className='mt-6 bg-white dark:bg-gray-800 p-4 rounded shadow'>
+      <h3 className='text-lg font-bold mb-2'>Text Generation Chart</h3>
+      {history.length > 0 ? (
+        <Line data={data} options={options} />
+      ) : (
+        <p className='text-gray-500 dark:text-gray-300'>No data available</p>
+      )}
+    </div>
     )
 }
+
+export default ChartWidget;
